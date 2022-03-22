@@ -20,6 +20,8 @@ const (
 	sslmode = "disable"
 )
 
+/* estrutura de dados que será
+inserida no banco de dados */
 type row struct {
 	cpf           string
 	private       string
@@ -30,6 +32,8 @@ type row struct {
 	lojaMaisFreq  string
 	lojaUltCompra string
 }
+
+var cpfInvalido []string
 
 func indexHandler(c *fiber.Ctx, db *sql.DB) error {
 	var rowData row
@@ -49,8 +53,10 @@ func indexHandler(c *fiber.Ctx, db *sql.DB) error {
 	})
 }
 
-func postHandler(c *fiber.Ctx, db *sql.DB) error {
-	return c.SendString("Hello")
+func cpfHandler(c *fiber.Ctx, db *sql.DB) error {
+	return c.Render("cpf", fiber.Map{
+		"CPF": cpfInvalido,
+	})
 }
 
 func main() {
@@ -61,6 +67,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// comando para criar tabela do banco de dados
 	sqlCreateTable := `CREATE TABLE IF NOT EXISTS data (
 					  cpf varchar(14) NOT NULL,
 					  private bool NOT NULL,
@@ -72,6 +79,7 @@ func main() {
 					  loja_ultima_compra varchar(14)
 					  );`
 
+	// comando de inserção de dados no DB
 	sqlInsertData := `INSERT INTO data (cpf, private, incompleto, ultima_compra,
 	                  ticket_medio, ticket_ultimo, loja_mais_frequente, loja_ultima_compra)
 	                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`
@@ -83,11 +91,13 @@ func main() {
 
 	finalData := splitData(fileScanned)
 
+	// criação da tabela
 	_, err = db.Exec(sqlCreateTable)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// inserção de dados no DB
 	for i := range finalData {
 		_, err := db.Exec(sqlInsertData, finalData[i].cpf, finalData[i].private, finalData[i].incompleto, finalData[i].ultCompra, finalData[i].ticketMedio, finalData[i].ticketUltimo, finalData[i].lojaMaisFreq, finalData[i].lojaUltCompra)
 		if len(finalData[i].cpf) > 11 {
@@ -107,12 +117,12 @@ func main() {
 		return indexHandler(c, db)
 	})
 
-	app.Post("/", func(c *fiber.Ctx) error {
-		return postHandler(c, db)
+	app.Get("/cpf", func(c *fiber.Ctx) error {
+		return cpfHandler(c, db)
 	})
 
 	port := "8080"
 
-	app.Static("/", "./public")
+	app.Static("/", "./views")
 	log.Fatalln(app.Listen(fmt.Sprintf(":%v", port)))
 }

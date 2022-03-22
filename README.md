@@ -7,6 +7,5 @@ Aplicativo que lê o arquivo base_teste.txt, trata os dados, insere em um banco 
 
 - Clone o repositório
 - Certifique-se de que não há nenhum serviço do Postgresql rodando na sua máquina.
-- `docker build --tag conservice .`
-- `docker run conservice`
+- `docker-compose up --build`
 - Abra o navegador e digite localhost:8080

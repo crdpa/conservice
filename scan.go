@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -12,6 +11,7 @@ import (
 	"github.com/paemuri/brdoc"
 )
 
+// lê o arquivo de texto e coloca em um slice de strings
 func readLines(path string) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -27,6 +27,8 @@ func readLines(path string) ([]string, error) {
 	return lines, scanner.Err()
 }
 
+/* separa os dados e converte para os tipos
+ * compatíveis com o banco de dados */
 func splitData(data []string) []row {
 	parsedData := make([]row, len(data)-1)
 	for i1, v1 := range data {
@@ -38,23 +40,35 @@ func splitData(data []string) []row {
 			newIndex := i1 - 1
 			switch i2 {
 			case 0:
-				if !brdoc.IsCPF(v2) {
-					fmt.Println(v2, "invalido")
+				if !contains(cpfInvalido, v2) {
+					if !brdoc.IsCPF(v2) {
+						cpfInvalido = append(cpfInvalido, v2)
+					}
 				}
 				parsedData[newIndex].cpf = cleanStrings(v2)
 			case 1:
-				parsedData[newIndex].private = strToBool(v2)
+				parsedData[newIndex].private = v2
 			case 2:
-				parsedData[newIndex].incompleto = strToBool(v2)
+				parsedData[newIndex].incompleto = v2
 			case 3:
-				parsedData[newIndex].ultCompra = strToDate(v2)
+				parsedData[newIndex].ultCompra = v2
 			case 4:
 				parsedData[newIndex].ticketMedio = strToFloat(v2)
 			case 5:
 				parsedData[newIndex].ticketUltimo = strToFloat(v2)
 			case 6:
+				if v2 != "NULL" && !contains(cpfInvalido, v2) {
+					if !brdoc.IsCNPJ(v2) {
+						cpfInvalido = append(cpfInvalido, v2)
+					}
+				}
 				parsedData[newIndex].lojaMaisFreq = cleanStrings(v2)
 			case 7:
+				if v2 != "NULL" && !contains(cpfInvalido, v2) {
+					if !brdoc.IsCNPJ(v2) {
+						cpfInvalido = append(cpfInvalido, v2)
+					}
+				}
 				parsedData[newIndex].lojaUltCompra = cleanStrings(v2)
 			}
 		}
@@ -63,13 +77,7 @@ func splitData(data []string) []row {
 	return parsedData
 }
 
-func strToDate(value string) string {
-	if value == "NULL" {
-		value = "1900-01-01"
-	}
-	return value
-}
-
+// retira pontos, barras e traços dos CPF/CPNJs
 func cleanStrings(value string) string {
 	if value != "NULL" {
 		re, err := regexp.Compile(`[\\\-\.//]`)
@@ -81,17 +89,12 @@ func cleanStrings(value string) string {
 
 		return cleanString
 	}
+
 	return value
 }
 
-func strToBool(value string) string {
-	if value == "1" {
-		return "true"
-	} else {
-		return "false"
-	}
-}
-
+/* converte valor para float pois o campo
+do banco de dados utiliza duas casas decimais */
 func strToFloat(value string) float64 {
 	if value == "NULL" {
 		value = "0"
@@ -103,4 +106,16 @@ func strToFloat(value string) float64 {
 	}
 
 	return toFloat
+}
+
+/* checa se o elemento ja está contido no slice
+ * para evitar CPFs/CNPJs inválidos duplicados */
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
 }
