@@ -3,7 +3,7 @@
 
 Aplicativo que lê o arquivo base_teste.txt, trata os dados, insere em um banco de dados Postgresql e sobe um servidor para expor os dados em uma página de internet.
 
-## Instalação
+## Como executar
 
 - Clone o repositório
 - Certifique-se de que não há nenhum serviço do Postgresql rodando na sua máquina.
@@ -17,7 +17,7 @@ Aplicativo que lê o arquivo base_teste.txt, trata os dados, insere em um banco 
 
 Application that reads base_teste.txt, split and insert the data in PostgreSQL. It runs a web server to expose the data in a html page.
 
-## Install
+## How to run
 
 - Clone
 - Make sure there is no PostgreSQL instance running locally
