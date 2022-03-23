@@ -27,13 +27,13 @@ type row struct {
 	private       string
 	incompleto    string
 	ultCompra     string
-	ticketMedio   float64
-	ticketUltimo  float64
+	ticketMedio   string
+	ticketUltimo  string
 	lojaMaisFreq  string
 	lojaUltCompra string
 }
 
-var cpfInvalido []string
+var docInvalido []string
 
 func indexHandler(c *fiber.Ctx, db *sql.DB) error {
 	var rowData row
@@ -55,7 +55,7 @@ func indexHandler(c *fiber.Ctx, db *sql.DB) error {
 
 func cpfHandler(c *fiber.Ctx, db *sql.DB) error {
 	return c.Render("cpf", fiber.Map{
-		"CPF": cpfInvalido,
+		"CPF": docInvalido,
 	})
 }
 
@@ -82,7 +82,7 @@ func main() {
 	// comando de inserção de dados no DB
 	sqlInsertData := `INSERT INTO data (cpf, private, incompleto, ultima_compra,
 	                  ticket_medio, ticket_ultimo, loja_mais_frequente, loja_ultima_compra)
-	                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`
+	                  VALUES ($1, $2, $3, NULLIF($4,'NULL')::date, NULLIF($5, 0.0)::numeric, NULLIF($6, 0.0)::numeric, $7, $8);`
 
 	fileScanned, err := readLines("./base_teste.txt")
 	if err != nil {
@@ -92,21 +92,25 @@ func main() {
 	finalData := splitData(fileScanned)
 
 	// criação da tabela
+	_, err = db.Exec(`DROP TABLE data;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	_, err = db.Exec(sqlCreateTable)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	fmt.Println("Aguarde. Inserindo dados no banco de dados...")
 	// inserção de dados no DB
 	for i := range finalData {
 		_, err := db.Exec(sqlInsertData, finalData[i].cpf, finalData[i].private, finalData[i].incompleto, finalData[i].ultCompra, finalData[i].ticketMedio, finalData[i].ticketUltimo, finalData[i].lojaMaisFreq, finalData[i].lojaUltCompra)
-		if len(finalData[i].cpf) > 11 {
-			fmt.Println(finalData[i].cpf)
-		}
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
+	fmt.Println("Pronto! Abra o navegador e digite localhost:8080")
 
 	engine := html.New("./views", ".html")
 	app := fiber.New(fiber.Config{

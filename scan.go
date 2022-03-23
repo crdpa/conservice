@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/paemuri/brdoc"
@@ -40,9 +39,9 @@ func splitData(data []string) []row {
 			newIndex := i1 - 1
 			switch i2 {
 			case 0:
-				if !contains(cpfInvalido, v2) {
+				if !contains(docInvalido, v2) {
 					if !brdoc.IsCPF(v2) {
-						cpfInvalido = append(cpfInvalido, v2)
+						docInvalido = append(docInvalido, v2)
 					}
 				}
 				parsedData[newIndex].cpf = cleanStrings(v2)
@@ -53,20 +52,20 @@ func splitData(data []string) []row {
 			case 3:
 				parsedData[newIndex].ultCompra = v2
 			case 4:
-				parsedData[newIndex].ticketMedio = strToFloat(v2)
+				parsedData[newIndex].ticketMedio = commaToPeriod(v2)
 			case 5:
-				parsedData[newIndex].ticketUltimo = strToFloat(v2)
+				parsedData[newIndex].ticketUltimo = commaToPeriod(v2)
 			case 6:
-				if v2 != "NULL" && !contains(cpfInvalido, v2) {
+				if v2 != "NULL" && !contains(docInvalido, v2) {
 					if !brdoc.IsCNPJ(v2) {
-						cpfInvalido = append(cpfInvalido, v2)
+						docInvalido = append(docInvalido, v2)
 					}
 				}
 				parsedData[newIndex].lojaMaisFreq = cleanStrings(v2)
 			case 7:
-				if v2 != "NULL" && !contains(cpfInvalido, v2) {
+				if v2 != "NULL" && !contains(docInvalido, v2) {
 					if !brdoc.IsCNPJ(v2) {
-						cpfInvalido = append(cpfInvalido, v2)
+						docInvalido = append(docInvalido, v2)
 					}
 				}
 				parsedData[newIndex].lojaUltCompra = cleanStrings(v2)
@@ -93,19 +92,20 @@ func cleanStrings(value string) string {
 	return value
 }
 
-/* converte valor para float pois o campo
-do banco de dados utiliza duas casas decimais */
-func strToFloat(value string) float64 {
+/* substitui vírgula por ponto e converte
+ * para float pois o campo do banco de dados
+ * utiliza duas casas decimais */
+func commaToPeriod(value string) string {
 	if value == "NULL" {
 		value = "0"
 	}
 	value = strings.Replace(value, ",", ".", 1)
-	toFloat, err := strconv.ParseFloat(value, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
+	//toFloat, err := strconv.ParseFloat(value, 64)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
-	return toFloat
+	return value
 }
 
 /* checa se o elemento ja está contido no slice
