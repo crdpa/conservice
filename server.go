@@ -102,7 +102,11 @@ func main() {
 	fmt.Printf("\nAguarde. Inserindo dados no banco de dados...\n")
 	// inserção de dados no DB
 	for i := range finalData {
-		_, err := db.Exec(sqlInsertData, finalData[i].Cpf, finalData[i].Private, finalData[i].Incompleto, finalData[i].UltCompra, finalData[i].TicketMedio, finalData[i].TicketUltimo, finalData[i].LojaMaisFreq, finalData[i].LojaUltCompra)
+		_, err := db.Exec(sqlInsertData, finalData[i].Cpf,
+			finalData[i].Private, finalData[i].Incompleto,
+			finalData[i].UltCompra, finalData[i].TicketMedio,
+			finalData[i].TicketUltimo, finalData[i].LojaMaisFreq,
+			finalData[i].LojaUltCompra)
 		if err != nil {
 			log.Println(err)
 		}
