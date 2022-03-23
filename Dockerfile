@@ -12,5 +12,6 @@ COPY --from=builder /build/conservice /app/conservice
 COPY base_teste.txt ./base_teste.txt
 COPY views/index.html ./views/index.html
 COPY views/cpf.html ./views/cpf.html
+COPY views/styles.css ./views/styles.css
 EXPOSE 8080 8080
 ENTRYPOINT ["/app/conservice"]

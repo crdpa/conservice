@@ -18,9 +18,11 @@
   </tr>
 </thead>
 <tbody class="table-hover">
+  {{range .CPF}}
   <tr>
-    <td class="text-left">1</td>
+    <td class="text-left">{{.}}</td>
   </tr>
+  {{end}}
 </tbody>
 </table>
 </body>

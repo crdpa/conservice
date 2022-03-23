@@ -28,8 +28,8 @@ func readLines(path string) ([]string, error) {
 
 /* separa os dados e converte para os tipos
  * compatíveis com o banco de dados */
-func splitData(data []string) []row {
-	parsedData := make([]row, len(data)-1)
+func splitData(data []string) []Row {
+	parsedData := make([]Row, len(data)-1)
 	for i1, v1 := range data {
 		if i1 == 0 {
 			continue
@@ -44,31 +44,31 @@ func splitData(data []string) []row {
 						docInvalido = append(docInvalido, v2)
 					}
 				}
-				parsedData[newIndex].cpf = cleanStrings(v2)
+				parsedData[newIndex].Cpf = v2
 			case 1:
-				parsedData[newIndex].private = v2
+				parsedData[newIndex].Private = v2
 			case 2:
-				parsedData[newIndex].incompleto = v2
+				parsedData[newIndex].Incompleto = v2
 			case 3:
-				parsedData[newIndex].ultCompra = v2
+				parsedData[newIndex].UltCompra = v2
 			case 4:
-				parsedData[newIndex].ticketMedio = commaToPeriod(v2)
+				parsedData[newIndex].TicketMedio = commaToPeriod(v2)
 			case 5:
-				parsedData[newIndex].ticketUltimo = commaToPeriod(v2)
+				parsedData[newIndex].TicketUltimo = commaToPeriod(v2)
 			case 6:
 				if v2 != "NULL" && !contains(docInvalido, v2) {
 					if !brdoc.IsCNPJ(v2) {
 						docInvalido = append(docInvalido, v2)
 					}
 				}
-				parsedData[newIndex].lojaMaisFreq = cleanStrings(v2)
+				parsedData[newIndex].LojaMaisFreq = v2
 			case 7:
 				if v2 != "NULL" && !contains(docInvalido, v2) {
 					if !brdoc.IsCNPJ(v2) {
 						docInvalido = append(docInvalido, v2)
 					}
 				}
-				parsedData[newIndex].lojaUltCompra = cleanStrings(v2)
+				parsedData[newIndex].LojaUltCompra = v2
 			}
 		}
 	}
@@ -92,18 +92,12 @@ func cleanStrings(value string) string {
 	return value
 }
 
-/* substitui vírgula por ponto e converte
- * para float pois o campo do banco de dados
- * utiliza duas casas decimais */
+// substitui vírgula por ponto
 func commaToPeriod(value string) string {
 	if value == "NULL" {
 		value = "0"
 	}
 	value = strings.Replace(value, ",", ".", 1)
-	//toFloat, err := strconv.ParseFloat(value, 64)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
 
 	return value
 }
