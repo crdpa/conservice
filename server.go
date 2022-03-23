@@ -71,14 +71,14 @@ func main() {
 
 	// comando para criar tabela do banco de dados
 	sqlCreateTable := `CREATE TABLE IF NOT EXISTS data (
-					  cpf varchar(20) NOT NULL,
+					  cpf varchar NOT NULL,
 					  private bool NOT NULL,
 					  incompleto bool NOT NULL,
 					  ultima_compra DATE,
 					  ticket_medio decimal(12,2),
 					  ticket_ultimo decimal(12,2),
-					  loja_mais_frequente varchar(20),
-					  loja_ultima_compra varchar(20)
+					  loja_mais_frequente varchar,
+					  loja_ultima_compra varchar
 					  );`
 
 	// comando de inserção de dados no DB
