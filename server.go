@@ -104,7 +104,7 @@ func main() {
 	for i := range finalData {
 		_, err := db.Exec(sqlInsertData, finalData[i].Cpf, finalData[i].Private, finalData[i].Incompleto, finalData[i].UltCompra, finalData[i].TicketMedio, finalData[i].TicketUltimo, finalData[i].LojaMaisFreq, finalData[i].LojaUltCompra)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}
 	fmt.Printf("Pronto! Abra o navegador e digite localhost:8080\n\n")

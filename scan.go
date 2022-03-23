@@ -35,40 +35,30 @@ func splitData(data []string) []Row {
 			continue
 		}
 		lines := strings.Fields(v1)
-		for i2, v2 := range lines {
+		for _, v2 := range lines {
 			newIndex := i1 - 1
-			switch i2 {
-			case 0:
-				if !contains(docInvalido, v2) {
-					if !brdoc.IsCPF(v2) {
-						docInvalido = append(docInvalido, v2)
-					}
+			parsedData[newIndex].Cpf = lines[0]
+			parsedData[newIndex].Private = lines[1]
+			parsedData[newIndex].Incompleto = lines[2]
+			parsedData[newIndex].UltCompra = lines[3]
+			parsedData[newIndex].TicketMedio = commaToPeriod(lines[4])
+			parsedData[newIndex].TicketUltimo = commaToPeriod(lines[5])
+			parsedData[newIndex].LojaMaisFreq = lines[6]
+			parsedData[newIndex].LojaUltCompra = lines[7]
+			if !contains(docInvalido, lines[0]) {
+				if !brdoc.IsCPF(lines[0]) {
+					docInvalido = append(docInvalido, v2)
 				}
-				parsedData[newIndex].Cpf = v2
-			case 1:
-				parsedData[newIndex].Private = v2
-			case 2:
-				parsedData[newIndex].Incompleto = v2
-			case 3:
-				parsedData[newIndex].UltCompra = v2
-			case 4:
-				parsedData[newIndex].TicketMedio = commaToPeriod(v2)
-			case 5:
-				parsedData[newIndex].TicketUltimo = commaToPeriod(v2)
-			case 6:
-				if v2 != "NULL" && !contains(docInvalido, v2) {
-					if !brdoc.IsCNPJ(v2) {
-						docInvalido = append(docInvalido, v2)
-					}
+			}
+			if v2 != "NULL" && !contains(docInvalido, lines[6]) {
+				if !brdoc.IsCNPJ(v2) {
+					docInvalido = append(docInvalido, lines[6])
 				}
-				parsedData[newIndex].LojaMaisFreq = v2
-			case 7:
-				if v2 != "NULL" && !contains(docInvalido, v2) {
-					if !brdoc.IsCNPJ(v2) {
-						docInvalido = append(docInvalido, v2)
-					}
+			}
+			if v2 != "NULL" && !contains(docInvalido, lines[7]) {
+				if !brdoc.IsCNPJ(v2) {
+					docInvalido = append(docInvalido, lines[7])
 				}
-				parsedData[newIndex].LojaUltCompra = v2
 			}
 		}
 	}
