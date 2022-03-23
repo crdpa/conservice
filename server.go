@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"runtime"
 
 	_ "github.com/lib/pq"
 
@@ -60,6 +61,7 @@ func cpfHandler(c *fiber.Ctx, db *sql.DB) error {
 }
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	connStr := fmt.Sprintf("user=%s dbname=%s password=%s host=%s port=%d sslmode=%s", user, dbname, pass, host, dbport, sslmode)
 
 	db, err := sql.Open("postgres", connStr)
