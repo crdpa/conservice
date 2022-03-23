@@ -92,11 +92,6 @@ func main() {
 	finalData := splitData(fileScanned)
 
 	// criação da tabela
-	_, err = db.Exec(`DROP TABLE data;`)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	_, err = db.Exec(sqlCreateTable)
 	if err != nil {
 		log.Fatal(err)
