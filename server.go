@@ -46,7 +46,9 @@ func indexHandler(c *fiber.Ctx, db *sql.DB) error {
 		c.JSON("An error ocurred.")
 	}
 	for rows.Next() {
-		rows.Scan(&rowData.Cpf, &rowData.Private, &rowData.Incompleto, &rowData.UltCompra, &rowData.TicketMedio, &rowData.TicketUltimo, &rowData.LojaMaisFreq, &rowData.LojaUltCompra)
+		rows.Scan(&rowData.Cpf, &rowData.Private, &rowData.Incompleto,
+			&rowData.UltCompra, &rowData.TicketMedio, &rowData.TicketUltimo,
+			&rowData.LojaMaisFreq, &rowData.LojaUltCompra)
 		data = append(data, rowData)
 	}
 	return c.Render("index", fiber.Map{
@@ -62,7 +64,8 @@ func cpfHandler(c *fiber.Ctx, db *sql.DB) error {
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	connStr := fmt.Sprintf("user=%s dbname=%s password=%s host=%s port=%d sslmode=%s", user, dbname, pass, host, dbport, sslmode)
+	connStr := fmt.Sprintf("user=%s dbname=%s password=%s host=%s port=%d sslmode=%s",
+		user, dbname, pass, host, dbport, sslmode)
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
