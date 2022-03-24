@@ -2,9 +2,7 @@ package main
 
 import (
 	"bufio"
-	"log"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/paemuri/brdoc"
@@ -62,22 +60,6 @@ func splitData(data []string) []Row {
 	}
 
 	return parsedData
-}
-
-// retira pontos, barras e traços dos CPF/CPNJs
-func cleanStrings(value string) string {
-	if value != "NULL" {
-		re, err := regexp.Compile(`[\\\-\.//]`)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		cleanString := re.ReplaceAllString(value, "")
-
-		return cleanString
-	}
-
-	return value
 }
 
 // substitui vírgula por ponto
